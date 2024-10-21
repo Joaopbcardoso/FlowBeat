@@ -1,8 +1,23 @@
-import { createServer } from 'node:http'
-const servidor = createServer((req, res)=>{
-    console.log('Hello World!')
-    res.write('Ta Funcionando')
-    return res.end()
+import Express from "express";
+
+const app = Express()
+app.use(Express.json())
+
+app.post('/registro', (req, res) =>{
+    const{ nome, sobrenome, email, senha, dataNascimento } = req.body
+    if(!nome || !sobrenome || !email || !senha || !dataNascimento){
+        res.send('você deve preencher todos os campos')
+    }
+    console.log(email);
+    res.send('Usuário Criado')
 })
 
-servidor.listen(8000);
+app.post('/login', (req, res) =>{
+    const{ email, senha } = req.body
+    if(!email || !senha){
+        res.send('você deve preencher todos os campos')
+    }
+    res.send('Usuário Logado')
+})
+
+app.listen(8000);
