@@ -1,14 +1,23 @@
 import Express from "express";
+import { criarTabelas, User } from "./db.js";
 
 const app = Express()
 app.use(Express.json())
+//criarTabelas()
 
-app.post('/registro', (req, res) =>{
+app.post('/registro', async (req, res) =>{
     const{ nome, sobrenome, email, senha, dataNascimento } = req.body
     if(!nome || !sobrenome || !email || !senha || !dataNascimento){
         res.send('você deve preencher todos os campos')
+        return
     }
-    console.log(email);
+const userExiste = await User.findAll({email: email})
+if(userExiste){
+    res.send('O usuário já existe')
+    return
+}
+
+    const teste = await User.create({nome, sobrenome, email, senha, dataNascimento})
     res.send('Usuário Criado')
 })
 
