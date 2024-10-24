@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, TextInput, Pressable, Image } from "react-native";
+import { Link } from "expo-router"
 
 
 export default function Login() {
@@ -13,7 +14,7 @@ export default function Login() {
         <View style={style.form}>
           <View>
             <View style={style.inputContainer}>
-              <Text style={style.inputTxt}>Email</Text>
+              <Text style={style.label}>Email</Text>
               <TextInput
                 style={style.input}
                 keyboardType="email-address"
@@ -21,13 +22,14 @@ export default function Login() {
               />
             </View>
             <View style={style.inputContainer}>
-              <Text style={style.inputTxt}>Password</Text>
+              <Text style={style.label}>Password</Text>
               <TextInput
                 secureTextEntry={true}
                 style={style.input}
                 placeholder="Senha"
               />
             </View>
+            <Text style={style.label}>Não possui cadastro? <Link href="./cadastro"><Text style={style.link}>Cadastre-se</Text></Link></Text>
             <Pressable><Text style={style.botao}>Sign Up</Text></Pressable>
           </View>
           </View>
@@ -65,6 +67,12 @@ const style = StyleSheet.create({
         backgroundColor: '#FFF',
         fontSize: 15
     },
+
+    link:{
+      color: "#00ff43",
+      textDecorationLine: "underline"
+    },
+
     titleForm: {
         textAlign: "left",
         fontSize: 30,
@@ -83,10 +91,13 @@ const style = StyleSheet.create({
         padding: 5,
         color: '#FFF', 
         width: 150,
-        margin: 10
+        height: 45,
+        margin: 20,
+        alignSelf: "center",
+        textAlignVertical: "center"
     },
 
-    inputTxt: {
+    label: {
         marginLeft: 12,
         color: "white"
     }
