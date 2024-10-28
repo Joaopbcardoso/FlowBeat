@@ -1,8 +1,8 @@
 import React, {useState} from "react";
 import { View, Text, StyleSheet, TextInput, Pressable, Image, ScrollView } from "react-native";
-import { Link } from "expo-router"
+import { Link, router } from "expo-router"
 
-export default function Login() {
+export default function Cadastro() { 
     const [data, setData] = useState({
         nome: '',
         sobreNome: '',
@@ -29,9 +29,11 @@ export default function Login() {
             })
             const catchMessage = await response.text()
             alert(catchMessage)
+            router.navigate('/')
 
         }catch(error){
-            alert("Erro ao cadastrar novo usuário");
+            const catchError = await response.text()
+            alert(catchError)
             console.log(error);
         }
     }
@@ -43,8 +45,6 @@ export default function Login() {
         source={require("../../assets/images/FlowBeat.png")}
       />
       <View style={style.form}>
-        <Text style={style.titleForm}>Cadastrar</Text>
-        
         <View style={style.inputContainer}>
           <Text style={style.label}>Nome</Text>
           <TextInput
@@ -97,7 +97,7 @@ export default function Login() {
           />
         </View>
         <Text style={style.label}>Já possui cadastro? Fazer <Link href="/"><Text style={style.link}>Login</Text></Link></Text>
-        <Pressable onPress={handleSignup}>
+        <Pressable onPress={handleSignup} >
           <Text style={style.botao}>Sign Up</Text>
         </Pressable>
       </View>
@@ -116,15 +116,15 @@ const style = StyleSheet.create({
     resizeMode: 'cover',
     width: 400,
     height: 300,
-    alignSelf: 'center', // Centraliza a imagem dentro da ScrollView
+    alignSelf: 'center', 
   },
   
   form: {
     display: "flex",
     flexDirection: "column",
-    alignItems: 'center', // Centraliza o conteúdo do formulário
+    alignItems: 'center', 
     rowGap: 10,
-    paddingBottom: 20, // Adiciona um pouco de espaço na parte inferior
+    paddingBottom: 20, 
   },
 
   input: {
@@ -159,7 +159,7 @@ const style = StyleSheet.create({
 
   botao: {
     backgroundColor: '#00ff43',
-    borderRadius: 3,
+    borderRadius: 20,
     textAlign: 'center',
     padding: 10,
     color: '#FFF', 

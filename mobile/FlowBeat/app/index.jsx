@@ -1,9 +1,39 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, StyleSheet, TextInput, Pressable, Image } from "react-native";
-import { Link } from "expo-router"
+import { Link, router } from "expo-router"
 
 
 export default function Login() {
+  const [data, setData] = useState({
+    email: '',
+    senha: ''
+  });
+  const handleLogin = async () => {
+    try {
+      const response = await fetch("http://localhost:8000/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "*/*"
+        },
+        body: JSON.stringify({
+          "email": data.email,
+          "senha": data.senha,
+        })
+        
+        
+      })
+      router.navigate('/home')
+      const catchMessage = await response.text()
+      alert(catchMessage)
+      
+
+    } catch (error) {
+      router.navigate('/')
+      console.log(error);
+      alert(error)
+    }
+  }
   return (
     <View style={style.container}>
       <Image
@@ -19,6 +49,8 @@ export default function Login() {
                 style={style.input}
                 keyboardType="email-address"
                 placeholder="E-mail"
+                value={data.email}
+                onChangeText={(valor) => { setData({ ...data, email: valor }) }}
               />
             </View>
             <View style={style.inputContainer}>
@@ -27,78 +59,80 @@ export default function Login() {
                 secureTextEntry={true}
                 style={style.input}
                 placeholder="Senha"
+                value={data.senha}
+                onChangeText={(valor) => { setData({ ...data, senha: valor }) }}
               />
             </View>
             <Text style={style.label}>Não possui cadastro? <Link href="./cadastro"><Text style={style.link}>Cadastre-se</Text></Link></Text>
-            <Pressable><Text style={style.botao}>Sign Up</Text></Pressable>
+            <Pressable onPress={handleLogin}><Text style={style.botao}>Sign Up</Text></Pressable>
           </View>
-          </View>
+        </View>
       </View>
     </View>
   );
 }
 
 const style = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: 'center',
-        backgroundColor: '#2E2E2E'
-    },
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    backgroundColor: '#2E2E2E'
+  },
 
-    logoLogin : {
-        resizeMode:'cover',
-        width: 400,
-        height: 300
-    }, 
-    form: {
-        display: "flex",
-        flexDirection: "column",
-        alignItems: 'center',
-        rowGap: 5,
-        marginTop: 50,
-    },
-    input: {
-        height: 40,
-        margin: 15,
-        borderWidth: 1,
-        padding: 25,
-        width: 350,
-        borderRadius: 10,
-        backgroundColor: '#FFF',
-        fontSize: 15
-    },
+  logoLogin: {
+    resizeMode: 'cover',
+    width: 400,
+    height: 300
+  },
+  form: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: 'center',
+    rowGap: 5,
+    marginTop: 10,
+  },
+  input: {
+    height: 40,
+    margin: 15,
+    borderWidth: 1,
+    padding: 25,
+    width: 350,
+    borderRadius: 10,
+    backgroundColor: '#FFF',
+    fontSize: 15
+  },
 
-    link:{
-      color: "#00ff43",
-      textDecorationLine: "underline"
-    },
+  link: {
+    color: "#00ff43",
+    textDecorationLine: "underline"
+  },
 
-    titleForm: {
-        textAlign: "left",
-        fontSize: 30,
-        fontWeight: "bold",
-        marginBottom: 20
-    },
-    inputContainer: {
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "baseline"
-    },
-    botao: {
-        backgroundColor: '#00ff43',
-        borderRadius: 3,
-        textAlign: 'center',
-        padding: 5,
-        color: '#FFF', 
-        width: 150,
-        height: 45,
-        margin: 20,
-        alignSelf: "center",
-        textAlignVertical: "center"
-    },
+  titleForm: {
+    textAlign: "left",
+    fontSize: 30,
+    fontWeight: "bold",
+  },
+  inputContainer: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "baseline"
+  },
+  botao: {
+    backgroundColor: '#00ff43',
+    borderRadius: 20,
+    textAlign: 'center',
+    padding: 5,
+    color: '#FFF',
+    width: 150,
+    height: 45,
+    margin: 20,
+    alignSelf: "center",
+    textAlignVertical: "center",
+    marginTop: 80
+  },
 
-    label: {
-        marginLeft: 12,
-        color: "white"
-    }
+  label: {
+    marginLeft: 12,
+    color: "white"
+  }
 })
