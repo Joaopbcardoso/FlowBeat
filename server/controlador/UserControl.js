@@ -23,5 +23,22 @@ const deleteUser = async(req, res) =>{
     }else('Usuário não Existe')
 }
 
+const updatePassword = async (req, res) => {
+    const { email, newPassword } = req.body;
+  
+    try {
+      const user = await User.findOne({ where: { email: email } });
+    
+      const senhaCriptografada = bcryptjs.hashSync(newPassword, 10);
+      user.senha = senhaCriptografada;
+      await user.save();
+  
+      res.json({ message: 'Senha atualizada com sucesso' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Erro ao atualizar a senha' });
+    }
+  };
 
-export { listUsers, uniqueUser, deleteUser }
+
+export { listUsers, uniqueUser, deleteUser, updatePassword }

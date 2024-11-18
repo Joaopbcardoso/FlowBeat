@@ -1,13 +1,15 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, TextInput, Pressable, Image } from "react-native";
-import { Link, router } from "expo-router"
-
+import React, { useState, useContext } from 'react';
+import { View, Text, StyleSheet, TextInput, Pressable, Image } from 'react-native';
+import { Link, router } from 'expo-router';
+import { AppContext } from '../scripts/userContext'; 
 
 export default function Login() {
   const [data, setData] = useState({
     email: '',
     senha: ''
   });
+  const { updateUser } = useContext(AppContext);
+
   const handleLogin = async () => {
     try {
       const response = await fetch("http://localhost:8000/autenticacao/login", {
@@ -20,20 +22,34 @@ export default function Login() {
           "email": data.email,
           "senha": data.senha,
         })
-        
-        
-      })
-      router.navigate('/home')
-      const catchMessage = await response.text()
-      alert(catchMessage)
-      
+      });
+
+      const catchMessage = await response.json(); // Assume que a resposta é um JSON com os dados do usuário
+      console.log(catchMessage); // Adicione esta linha para verificar o conteúdo da resposta
+
+      if (response.ok) {
+        const { userData } = catchMessage; // Acesse os dados do usuário a partir de userData
+        updateUser({
+          nome: userData.nome,
+          sobreNome: userData.sobrenome,
+          email: userData.email, // Use userData.email para garantir que está pegando do backend
+          dataNascimento: userData.dataNascimento,
+          senha: data.senha, // Adicione a senha aqui se necessário
+        });
+
+        router.navigate('/home');
+      } else {
+        alert(catchMessage.message || 'Erro ao fazer login');
+        router.navigate('/');
+      }
 
     } catch (error) {
-      router.navigate('/')
       console.log(error);
-      alert(error)
+      alert('Erro ao conectar ao servidor');
+      router.navigate('/');
     }
-  }
+  };
+
   return (
     <View style={style.container}>
       <Image
@@ -63,7 +79,9 @@ export default function Login() {
                 onChangeText={(valor) => { setData({ ...data, senha: valor }) }}
               />
             </View>
-            <Text style={style.label}>Não possui cadastro? <Link href="./cadastro"><Text style={style.link}>Cadastre-se</Text></Link></Text>
+            <Text style={style.label}>
+              Não possui cadastro? <Link href="./cadastro"><Text style={style.link}>Cadastre-se</Text></Link>
+            </Text>
             <Pressable onPress={handleLogin}><Text style={style.botao}>Sign Up</Text></Pressable>
           </View>
         </View>
@@ -78,7 +96,6 @@ const style = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#2E2E2E'
   },
-
   logoLogin: {
     resizeMode: 'cover',
     width: 400,
@@ -101,12 +118,10 @@ const style = StyleSheet.create({
     backgroundColor: '#FFF',
     fontSize: 15
   },
-
   link: {
     color: "#00ff43",
     textDecorationLine: "underline"
   },
-
   titleForm: {
     textAlign: "left",
     fontSize: 30,
@@ -130,9 +145,8 @@ const style = StyleSheet.create({
     textAlignVertical: "center",
     marginTop: 80
   },
-
   label: {
     marginLeft: 12,
     color: "white"
   }
-})
+});

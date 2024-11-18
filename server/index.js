@@ -7,6 +7,7 @@ import { userRoutes } from "./routing/userRoutes.js"
 const app = Express()
 app.use(Express.json())
 app.use(cors())
+//criarTabelas()
 
 app.use('/autenticacao', routes)
 app.use('/usuarios', userRoutes)

@@ -1,11 +1,12 @@
 import { Text, View, StyleSheet, Image } from 'react-native';
 import { Link } from 'expo-router';
+import Perfil from '../app/perfil';
 
-export default function Header({ titulo, linkPerfil }) {
+export default function Header({ titulo }) {
     return (
         <View style={styles.header}>
             <Text style={styles.titulo}>{titulo}</Text>
-            <Link href={`${linkPerfil}`}>
+            <Link href="/perfil" style={styles.link}>
                 <Image 
                     source={require('../assets/images/user.png')}
                     style={styles.perfil}
@@ -20,11 +21,10 @@ const styles = StyleSheet.create({
         backgroundColor: '#1B1616',
         height: '10%',
         width: '100%',
-        display: 'flex',
-        flexDirection: 'row', // Dispor os itens na horizontal
-        justifyContent: 'space-between', // Espaço entre o título e o perfil
-        alignItems: 'center', // Alinha verticalmente no centro
-        paddingHorizontal: 10, // Adiciona espaçamento nas laterais
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center', 
+        paddingHorizontal: 15, 
     },
 
     titulo: {
@@ -34,9 +34,15 @@ const styles = StyleSheet.create({
     },
 
     perfil: {
-        width: 25,
-        height: 25,
+        width: 30,
+        height: 30,
         backgroundColor: '#FFF',
         borderRadius: 100,
-    }
+    },
+
+    link: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
 });

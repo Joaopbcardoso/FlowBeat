@@ -11,32 +11,41 @@ export default function Cadastro() {
         dataNascimento: ''
     });
 
-    const handleSignup = async () =>{
-        try{
-            const response = await fetch("http://localhost:8000/autenticacao/registro",{
-                method: "POST",
-                headers:{
-                    "Content-Type": "application/json",
-                    "Accept":"*/*"
-                },
-                body: JSON.stringify({
-                    "nome": data.nome,
-                    "sobrenome": data.sobreNome,
-                    "email": data.email,
-                    "senha": data.senha,
-                    "dataNascimento": data.dataNascimento
-                })
-            })
-            const catchMessage = await response.text()
-            alert(catchMessage)
-            router.navigate('/')
-
-        }catch(error){
-            const catchError = await response.text()
-            alert(catchError)
-            console.log(error);
-        }
-    }
+    const handleSignup = async () => {
+      try {
+          const response = await fetch("http://localhost:8000/autenticacao/registro", {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json",
+                  "Accept": "*/*"
+              },
+              body: JSON.stringify({
+                  "nome": data.nome,
+                  "sobrenome": data.sobreNome,
+                  "email": data.email,
+                  "senha": data.senha,
+                  "dataNascimento": data.dataNascimento
+              })
+          });
+  
+          if (!response.ok) {
+              // Caso a resposta do servidor não seja 200 OK
+              const errorMessage = await response.text();
+              alert(`Erro: ${errorMessage}`);
+              return;
+          }
+  
+          // Sucesso no registro
+          const successMessage = await response.text();
+          alert(successMessage);
+          router.navigate('/'); // Redireciona para a página de login
+  
+      } catch (error) {
+          alert('Erro de conexão com o servidor. Por favor, tente novamente mais tarde.');
+          console.error('Erro:', error);
+      }
+  };
+  
 
   return (
     <ScrollView style={style.container}>

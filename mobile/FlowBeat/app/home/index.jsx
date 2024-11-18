@@ -2,22 +2,19 @@ import React, { useContext } from 'react';
 import { AppContext } from '../../scripts/userContext.js';
 import { View, StyleSheet } from 'react-native';
 import Header from '../../components/Header.jsx';
-import Perfil from '../perfil/perfil.jsx';
 
-const Home = () => {
+
+export default function Home() {
   return (
     <>
       <Header 
         titulo={'Bem vindo!'}
-        LinkPerfil={"./perfil"}
       />
       <View style={style.container}>
       </View>
     </>
   );
 };
-
-export default Home;
 
 const style = StyleSheet.create({
   container: {
