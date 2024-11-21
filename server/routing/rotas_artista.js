@@ -1,5 +1,5 @@
 import express from 'express'
-import { pegarTodosArtistas, pegarArtistaPorId, pegarAlbumsPorArtista } from '../controlador/controlador_artista';
+import { pegarTodosArtistas, pegarArtistaPorId, pegarAlbumsPorArtista } from '../controlador/controlador_artista.js';
 
 const rotas_artistas = express.Router();
 

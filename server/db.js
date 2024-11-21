@@ -1,7 +1,7 @@
 import Sequelize from 'sequelize'
 
 const sequelize = new Sequelize(
-    'spotfake',
+    'FlowBeat',
     'postgres',
     'postgres',
     {
