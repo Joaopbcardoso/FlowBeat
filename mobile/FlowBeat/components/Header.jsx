@@ -36,7 +36,6 @@ const styles = StyleSheet.create({
     perfil: {
         width: 30,
         height: 30,
-        backgroundColor: '#FFF',
         borderRadius: 100,
     },
 
