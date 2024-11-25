@@ -24,7 +24,7 @@ const User = sequelize.define('user', {
         allowNull: false,
         unique: true
     },
-    dataNasc: {
+    dataNascimento: {
         type: Sequelize.DataTypes.STRING,
         allowNull: false
     },
@@ -93,8 +93,6 @@ const Musica = sequelize.define('musica', {
 }, {
     tableName: 'musicas',
 });
-
-//relacionamentos
 
 Album.belongsTo(Artista, {
     foreignKey: 'artista_id',

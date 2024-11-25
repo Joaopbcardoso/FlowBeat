@@ -8,4 +8,4 @@ rotas_artistas.get('/:id', pegarArtistaPorId);
 rotas_artistas.get('/:id/albums/', pegarAlbumsPorArtista);  
 
 
-export {rotas_artistas};
+export { rotas_artistas };

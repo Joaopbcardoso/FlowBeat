@@ -1,5 +1,5 @@
 import express from "express"
-import { listUsers, uniqueUser, deleteUser, updatePassword } from "../controlador/userControl.js"
+import { listUsers, uniqueUser, deleteUser, updatePassword } from "../controlador/UserControl.js"
 
 const userRoutes = express.Router()
 

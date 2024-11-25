@@ -24,17 +24,17 @@ export default function Login() {
         })
       });
 
-      const catchMessage = await response.json(); // Assume que a resposta é um JSON com os dados do usuário
-      console.log(catchMessage); // Adicione esta linha para verificar o conteúdo da resposta
+      const catchMessage = await response.json(); 
+      console.log(catchMessage); 
 
       if (response.ok) {
-        const { userData } = catchMessage; // Acesse os dados do usuário a partir de userData
+        const { userData } = catchMessage;
         updateUser({
           nome: userData.nome,
           sobreNome: userData.sobrenome,
-          email: userData.email, // Use userData.email para garantir que está pegando do backend
+          email: userData.email, 
           dataNascimento: userData.dataNascimento,
-          senha: data.senha, // Adicione a senha aqui se necessário
+          senha: data.senha, 
         });
 
         router.navigate('/home');

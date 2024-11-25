@@ -44,17 +44,16 @@ const login = async (req, res) => {
             status: userExiste.status
         },
         'chavecriptografiajwt',
-        { expiresIn: 100 * 60 * 5 } // Token válido por 5 minutos
+        { expiresIn: 100 * 60 * 5 } 
     );
 
-    // Decodifica o token aqui antes de enviar a resposta
+
     const decodedToken = jsonwebtoken.decode(token);
 
-    // Envia os dados decodificados junto com o token
     res.json({
         mensagem: "Usuário logado",
         token: token,
-        userData: decodedToken // Dados decodificados no backend
+        userData: decodedToken 
     });
 };
 
