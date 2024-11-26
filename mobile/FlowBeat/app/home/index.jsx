@@ -1,82 +1,80 @@
-import React, { useContext } from 'react';
-import { AppContext } from '../../scripts/userContext.js';
-import { View, StyleSheet } from 'react-native';
-import Header from '../../components/Header.jsx';
-
+import React, { useState, useEffect } from 'react';
+import { View, Text, FlatList, Image, StyleSheet } from 'react-native';
 
 export default function Home() {
-  return (
-    <>
-      <Header 
-        titulo={'Bem vindo!'}
-      />
-      <View style={style.container}>
-      </View>
-    </>
-  );
-};
+  const [artistas, setArtistas] = useState([]);
 
-const style = StyleSheet.create({
+  useEffect(() => {
+    // Função para pegar todos os artistas com try...catch
+    const fetchArtistas = async () => {
+      try {
+        const response = await fetch("http://localhost:8000/artista/", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "*/*"
+          }
+        });
+
+        const catchMessage = await response.json();
+        console.log(catchMessage);
+
+        if (response.ok) {
+          setArtistas(catchMessage); // Atualiza o estado com os artistas
+        } else {
+          alert(catchMessage.message || 'Erro ao buscar artistas');
+        }
+
+      } catch (error) {
+        console.log(error);
+        alert('Erro ao conectar ao servidor');
+      }
+    };
+
+    fetchArtistas();
+  }, []);
+
+  // Função para renderizar cada item da lista de artistas
+  const renderItem = ({ item }) => (
+    <View style={styles.card}>
+      <Image source={{ uri: item.imageUrl }} style={styles.image} />
+      <Text style={styles.nome}>{item.nome}</Text>
+    </View>
+  );
+
+  return (
+    <View style={styles.container}>
+      <FlatList
+        data={artistas}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id.toString()}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+      />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    backgroundColor: '#2E2E2E'
+    backgroundColor: '#2E2E2E',
+    paddingTop: 20,
   },
-
-  logoLogin: {
-    resizeMode: 'cover',
-    width: 400,
-    height: 300
-  },
-  form: {
-    display: "flex",
-    flexDirection: "column",
+  card: {
+    marginRight: 20,
     alignItems: 'center',
-    rowGap: 5,
-    marginTop: 10,
   },
-  input: {
-    height: 40,
-    margin: 15,
-    borderWidth: 1,
-    padding: 25,
-    width: 350,
-    borderRadius: 10,
-    backgroundColor: '#FFF',
-    fontSize: 15
-  },
-
-  link: {
-    color: "#00ff43",
-    textDecorationLine: "underline"
-  },
-
-  titleForm: {
-    textAlign: "left",
-    fontSize: 30,
-    fontWeight: "bold",
-  },
-  inputContainer: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "baseline"
-  },
-  botao: {
-    backgroundColor: '#00ff43',
-    borderRadius: 20,
-    textAlign: 'center',
-    padding: 5,
-    color: '#FFF',
+  image: {
     width: 150,
-    height: 45,
-    margin: 20,
-    alignSelf: "center",
-    textAlignVertical: "center",
-    marginTop: 80
+    height: 150,
+    borderRadius: 10,
   },
-
-  label: {
-    marginLeft: 12,
-    color: "white"
-  }
-})
+  nome: {
+    marginTop: 10,
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'white',
+  },
+});

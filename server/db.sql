@@ -1,5 +1,5 @@
 INSERT INTO artists (nome, bio, "imageUrl", "createdAt", "updatedAt") VALUES
-('Fernandinho', 'É um cantor brasileiro de música cristã contemporânea, compositor e pastor evangélico.', 'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.facebook.com%2Fprfernandinho%2F&psig=AOvVaw2-jUyAFjefSg26uyqK-geJ&ust=1732714967093000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCMjdqLKQ-okDFQAAAAAdAAAAABAE', NOW(), NOW()),
+('Fernandinho', 'É um cantor brasileiro de música cristã contemporânea, compositor e pastor evangélico.', 'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.facebook.com%2Fprfernandinho%2F&psig=AOvVaw2-jUyAFjefSg26uyqK-geJ&ust=1732714967093000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCMjdqLKQ-okDFQAAAAAdAAAAABAE', NOW(), NOW())
 
 
 
