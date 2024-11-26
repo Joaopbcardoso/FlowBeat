@@ -18,8 +18,8 @@ export default function Perfil() {
 
   const handlePasswordChange = async () => {
     try {
-      const response = await fetch("http://localhost:8000/usuarios/updatePassword", {
-        method: "POST",
+      const response = await fetch("http://localhost:8000/user/updatePassword", {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
           "Accept": "*/*"

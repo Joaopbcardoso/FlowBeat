@@ -1,4 +1,5 @@
 import { User } from '../db.js'
+import bcryptjs from 'bcrypt'
 
 const listUsers = async (req, res) => {
     const allUsers = await User.findAll()
@@ -24,21 +25,19 @@ const deleteUser = async(req, res) =>{
 }
 
 const updatePassword = async (req, res) => {
-    const { email, newPassword } = req.body;
-  
-    try {
-      const user = await User.findOne({ where: { email: email } });
-    
-      const senhaCriptografada = bcryptjs.hashSync(newPassword, 10);
-      user.senha = senhaCriptografada;
-      await user.save();
-  
-      res.json({ message: 'Senha atualizada com sucesso' });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Erro ao atualizar a senha' });
-    }
-  };
+  const data = req.body;
+  const user = await User.findOne({ where: { email: data.email } });
+  if (!user) {
+      res.send("Usuário não encontrado.")
+      return
+  }
+
+  const senhaCriptografada = bcryptjs.hashSync(data.senha, 10);
+
+  user.senha = senhaCriptografada;
+  await user.save();
+  res.send('Senha atualizada com sucesso.')
+}
 
 
 export { listUsers, uniqueUser, deleteUser, updatePassword }

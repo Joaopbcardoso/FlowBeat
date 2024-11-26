@@ -6,6 +6,6 @@ const userRoutes = express.Router()
 userRoutes.get('/todos', listUsers)
 userRoutes.get('/unico', uniqueUser)
 userRoutes.delete('/delete', deleteUser)
-userRoutes.post('/updatePassword', updatePassword);
+userRoutes.put('/updatePassword', updatePassword);
 
 export { userRoutes }
