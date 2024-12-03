@@ -1,52 +1,72 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, Image, StyleSheet } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import ArtistaCard from '../../components/ArtistaCard.jsx';
+import AlbumCard from '../../components/AlbumCard.jsx';
 
 export default function Home() {
   const [artistas, setArtistas] = useState([]);
+  const [albuns, setAlbuns] = useState([]);
 
   useEffect(() => {
-    // Função para pegar todos os artistas com try...catch
     const fetchArtistas = async () => {
       try {
-        const response = await fetch("http://localhost:8000/artista/", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "Accept": "*/*"
-          }
-        });
-
-        const catchMessage = await response.json();
-        console.log(catchMessage);
-
-        if (response.ok) {
-          setArtistas(catchMessage); // Atualiza o estado com os artistas
-        } else {
-          alert(catchMessage.message || 'Erro ao buscar artistas');
+        const response = await fetch('http://192.168.0.12:8000/artista/'); // Replace with your actual artist endpoint
+        if (!response.ok) {
+          throw new Error(response.statusText || 'Erro ao buscar artistas');
         }
-
+        const data = await response.json();
+        setArtistas(data);
       } catch (error) {
-        console.log(error);
-        alert('Erro ao conectar ao servidor');
+        console.error('Error fetching artists:', error);
+        alert('Erro ao buscar artistas. Tente novamente mais tarde.');
       }
     };
 
     fetchArtistas();
   }, []);
 
-  // Função para renderizar cada item da lista de artistas
-  const renderItem = ({ item }) => (
-    <View style={styles.card}>
-      <Image source={{ uri: item.imageUrl }} style={styles.image} />
-      <Text style={styles.nome}>{item.nome}</Text>
-    </View>
-  );
+  useEffect(() => {
+    const fetchAlbuns = async () => {
+      try {
+        const response = await fetch('http://192.168.0.12:8000/album/'); // Replace with your actual album endpoint
+        if (!response.ok) {
+          throw new Error(response.statusText || 'Erro ao buscar álbuns');
+        }
+        const data = await response.json();
+        setAlbuns(data);
+      } catch (error) {
+        console.error('Error fetching albums:', error);
+        alert('Erro ao buscar álbuns. Tente novamente mais tarde.');
+      }
+    };
+
+    fetchAlbuns();
+  }, []);
 
   return (
     <View style={styles.container}>
+      <Text style={styles.title}>Artistas</Text>
       <FlatList
         data={artistas}
-        renderItem={renderItem}
+        renderItem={({ item }) => (
+          <TouchableOpacity> {/* Added TouchableOpacity for potential click handling */}
+            <ArtistaCard id={item.id} nome={item.nome} imageUrl={item.imageUrl} />
+          </TouchableOpacity>
+        )}
+        keyExtractor={(item) => item.id.toString()}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+      />
+
+      {/* Similar FlatList for albums */}
+      <Text style={styles.title}>Álbuns</Text>
+      <FlatList
+        data={albuns}
+        renderItem={({ item }) => (
+          <TouchableOpacity> {/* Added TouchableOpacity for potential click handling */}
+            <AlbumCard id={item.id} title={item.title} coverImageUrl={item.coverImageUrl} />
+          </TouchableOpacity>
+        )}
         keyExtractor={(item) => item.id.toString()}
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -62,19 +82,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#2E2E2E',
     paddingTop: 20,
   },
-  card: {
-    marginRight: 20,
-    alignItems: 'center',
-  },
-  image: {
-    width: 150,
-    height: 150,
-    borderRadius: 10,
-  },
-  nome: {
-    marginTop: 10,
-    fontSize: 16,
-    fontWeight: 'bold',
+  title: {
     color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
   },
 });

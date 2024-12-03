@@ -17,4 +17,7 @@ app.use('/artista', rotas_artistas)
 app.use('/album', rotas_albums)
 
 
-app.listen(8000)
+app.listen(8000, '0.0.0.0', () => {
+    console.log('Servidor rodando na porta 8000');
+  });
+  

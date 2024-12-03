@@ -7,7 +7,8 @@ export default function User() {
     const { foto, setFoto, dataUser, setDataUser, ngrok } = useContext(AppContext);
     const [image, setImage] = useState(foto || 'https://www.jet.ir/uploadFiles/avatar/noprofile.png');
     const [newImage, setNewImage] = useState(false);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isModalLogoutOpen, setIsModalLogoutOpen] = useState(false);
+    const [isModalPasswordOpen, setIsModalPasswordOpen] = useState(false);
     const [novaSenha, setNovaSenha] = useState('');
     const [confirmarNovaSenha, setConfirmarNovaSenha] = useState('');
 
@@ -72,25 +73,43 @@ export default function User() {
     };
 
     const handleChangePassword = async () => {
+        if (!dataUser || !dataUser.email) {
+            alert('Dados do usuário não encontrados');
+            return;
+        }
+    
         if (novaSenha !== confirmarNovaSenha) {
             alert('As senhas não coincidem');
             return;
         }
-        const res = await fetch(`${ngrok}/usuarios/atualiza`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ email: dataUser.email, senha: novaSenha })
-        });
-        if (res.status === 200) {
-            alert('Senha trocada com sucesso');
-            setIsModalOpen(false);
-        } else {
-            alert('Houve um erro ao trocar a senha');
-            setIsModalOpen(false);
+    
+        try {
+            const res = await fetch(`http://192.168.0.12:8000/updatePassword`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: dataUser.email,  
+                    novaSenha: novaSenha,   
+                }),
+            });
+    
+            if (res.status === 200) {
+                alert('Senha atualizada com sucesso');
+                setIsModalPasswordOpen(false);
+            } else {
+                const errorResponse = await res.json();
+                alert(errorResponse.message || 'Erro ao atualizar a senha');
+            }
+        } catch (error) {
+            console.log(error);
+            alert('Erro ao tentar alterar a senha');
         }
     };
+    
+    
+    
 
     return (
         <View style={styles.container}>
@@ -113,17 +132,24 @@ export default function User() {
                     <Text style={styles.infoText}>Email: {dataUser?.email}</Text>
                 </View>
 
-                <Pressable onPress={() => setIsModalOpen(true)} style={styles.changeImageButton}>
+                <Pressable onPress={() => setIsModalPasswordOpen(true)} style={styles.changeImageButton}>
                     <Text style={styles.changeImageText}>Trocar Senha</Text>
                 </Pressable>
+                <View>
+                    <Pressable onPress={() => setIsModalLogoutOpen(true)}><Text >Logout</Text></Pressable>
+                    <Image 
+                        style={styles.logoutimg}
+                        source={{uri: "../assets/images/logout.png"}}
+                    />
+                </View>
             </View>
 
             <Modal
                 animationType="slide"
                 transparent={true}
-                visible={isModalOpen}
+                visible={isModalPasswordOpen}
                 onRequestClose={() => {
-                    setIsModalOpen(!isModalOpen);
+                    setIsModalOpen(!isModalPasswordOpen);
                 }}>
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
@@ -143,6 +169,34 @@ export default function User() {
                         />
                         <Pressable onPress={handleChangePassword} style={styles.changeImageButton}>
                             <Text style={styles.changeImageText}>Alterar Senha</Text>
+                        </Pressable>
+                        <Pressable onPress={!isModalLogoutOpen} >
+                            <Text style={styles.cancel}>Cancelar</Text>
+                        </Pressable>
+                    </View>
+                </View>
+            </Modal>
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={isModalLogoutOpen}
+                onRequestClose={() => {
+                    setIsModalOpen(!isModalOpen);
+                }}>
+                <View style={styles.centeredView}>
+                    <View style={styles.modalView}>
+                        <TextInput
+                            placeholder='Tem certeza que deseja sair da sua conta?'
+                            style={styles.inputTextBox}
+                            onChangeText={setConfirmarNovaSenha}
+                            value={confirmarNovaSenha}
+                            secureTextEntry={true}
+                        />
+                        <Pressable onPress={!isModalLogoutOpen}>
+                            <Text style={styles.cancel}>Cancelar</Text>
+                        </Pressable>
+                        <Pressable onPress={handleChangePassword} style={styles.changeImageText}>
+                            <Text >Sim</Text>
                         </Pressable>
                     </View>
                 </View>
@@ -181,11 +235,18 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 60,
     borderWidth: 3,
-    borderColor: '#FF8746',
+    borderColor: '#00ff43',
     marginBottom: 20,
   },
   changeImageButton: {
-    backgroundColor: '#FF8746',
+    backgroundColor: '#00ff43',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    marginVertical: 15,
+  },
+  cancel: {
+    backgroundColor: '#FF0033',
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 12,

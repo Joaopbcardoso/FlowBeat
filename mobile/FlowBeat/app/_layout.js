@@ -1,35 +1,31 @@
 import React from "react";
 import { Slot, Stack } from "expo-router";
 import { AppProvider } from "../scripts/userContext.js";
+import { ArtistProvider } from "../scripts/artistContext.js"; // Importa o contexto de artista
+import { AlbumProvider } from "../scripts/albunsContext.js"; // Importa o contexto de álbum
 import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { useRouter, usePathname } from "expo-router";
 
 const CustomHeader = ({ titulo }) => {
   const router = useRouter();
-  const pathname = usePathname(); // Obtém o caminho atual da rota
+  const pathname = usePathname();
 
-  // Define se o botão de voltar será exibido
   const hideBackButton = ["/", "/home"].includes(pathname);
 
   return (
     <View style={styles.header}>
-      {/* Botão de voltar (aparece apenas se não estiver em "/", "/home") */}
       {!hideBackButton && (
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <Image
-            source={require("../assets/images/arrow_back.png")} // Imagem local
+            source={require("../assets/images/arrow_back.png")}
             style={styles.backImage}
           />
         </TouchableOpacity>
       )}
-
-      {/* Título */} 
       <Text style={styles.title}>{titulo}</Text>
-
-      {/* Botão de perfil */}
       <TouchableOpacity onPress={() => router.push("/perfil")} style={styles.profileButton}>
         <Image
-          source={require("../assets/images/user.png")} // Imagem local
+          source={require("../assets/images/user.png")}
           style={styles.profileImage}
         />
       </TouchableOpacity>
@@ -38,9 +34,8 @@ const CustomHeader = ({ titulo }) => {
 };
 
 const Layout = () => {
-  const pathname = usePathname(); // Obtém o pathname atual
+  const pathname = usePathname();
 
-  // Defina os títulos personalizados para cada rota
   const customTitles = {
     "/": "Login",
     "/cadastro": "Cadastro",
@@ -48,18 +43,21 @@ const Layout = () => {
     "/perfil": "Perfil do Usuário",
   };
 
-  // Obtém o título correspondente à rota atual
   const titulo = customTitles[pathname] || "Página";
 
   return (
     <AppProvider>
-      <Stack
-        screenOptions={{
-          header: () => <CustomHeader titulo={titulo} />, // Define o cabeçalho customizado
-        }}
-      >
-        <Slot /> {/* Renderiza as páginas das rotas */}
-      </Stack>
+      <ArtistProvider> 
+        <AlbumProvider>
+          <Stack
+            screenOptions={{
+              header: () => <CustomHeader titulo={titulo} />,
+            }}
+          >
+            <Slot />
+          </Stack>
+        </AlbumProvider>
+      </ArtistProvider>
     </AppProvider>
   );
 };
