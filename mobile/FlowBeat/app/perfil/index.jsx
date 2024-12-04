@@ -1,5 +1,5 @@
-import React, { useState, useContext, useEffect } from 'react'
-import { StyleSheet, View, Text, Image, TouchableOpacity, Pressable, Modal, TextInput } from 'react-native'
+import React, { useState, useContext, useEffect } from 'react';
+import { StyleSheet, View, Text, Image, TouchableOpacity, Pressable, Modal, TextInput } from 'react-native';
 import { AppContext } from '../../scripts/userContext.js';
 import * as ImagePicker from 'expo-image-picker';
 
@@ -34,15 +34,15 @@ export default function User() {
     const handleSendImage = async () => {
         try {
             const data = {
-                "file": image,
-                "upload_preset": 'ml_default',
-            }
+                file: image,
+                upload_preset: 'ml_default',
+            };
             const res = await fetch('https://api.cloudinary.com/v1_1/dykauix6q/upload', {
                 method: 'POST',
                 headers: {
-                    'content-type': 'application/json'
+                    'content-type': 'application/json',
                 },
-                body: JSON.stringify(data)
+                body: JSON.stringify(data),
             });
             const result = await res.json();
             setImage(result.url);
@@ -60,7 +60,7 @@ export default function User() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ foto: result.url, email: dataUser.email })
+                body: JSON.stringify({ foto: result.url, email: dataUser.email }),
             });
             if (response.ok) {
                 alert('Imagem de perfil atualizada com sucesso');
@@ -73,43 +73,34 @@ export default function User() {
     };
 
     const handleChangePassword = async () => {
-        if (!dataUser || !dataUser.email) {
-            alert('Dados do usuário não encontrados');
-            return;
-        }
-    
         if (novaSenha !== confirmarNovaSenha) {
             alert('As senhas não coincidem');
             return;
         }
-    
         try {
-            const res = await fetch(`http://192.168.0.12:8000/updatePassword`, {
+            const res = await fetch(`http://192.168.0.12:8000/autenticacao/change-password/${dataUser.id}`, {
                 method: 'PUT',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    email: dataUser.email,  
-                    novaSenha: novaSenha,   
-                }),
+                body: JSON.stringify({ novaSenha })
             });
-    
-            if (res.status === 200) {
-                alert('Senha atualizada com sucesso');
+
+            if (!res.ok) {
+                const errorMessage = await res.text();
+                alert(`Houve um problema: ${errorMessage}`);
                 setIsModalPasswordOpen(false);
-            } else {
-                const errorResponse = await res.json();
-                alert(errorResponse.message || 'Erro ao atualizar a senha');
+                return;
             }
+
+            alert('Senha trocada com sucesso');
+            setIsModalPasswordOpen(false);
         } catch (error) {
-            console.log(error);
-            alert('Erro ao tentar alterar a senha');
+            console.error('Erro na troca de senha:', error);
+            alert('Houve um problema na comunicação com o servidor. Tente novamente mais tarde.');
+            setIsModalPasswordOpen(false);
         }
-    };
-    
-    
-    
+    }
 
     return (
         <View style={styles.container}>
@@ -121,12 +112,6 @@ export default function User() {
                     />
                 </TouchableOpacity>
 
-                {newImage && (
-                    <Pressable onPress={handleSendImage} style={styles.changeImageButton}>
-                        <Text style={styles.changeImageText}>Trocar Imagem</Text>
-                    </Pressable>
-                )}
-
                 <View style={styles.userInfoContainer}>
                     <Text style={styles.infoText}>Nome: {dataUser?.nome}</Text>
                     <Text style={styles.infoText}>Email: {dataUser?.email}</Text>
@@ -135,33 +120,27 @@ export default function User() {
                 <Pressable onPress={() => setIsModalPasswordOpen(true)} style={styles.changeImageButton}>
                     <Text style={styles.changeImageText}>Trocar Senha</Text>
                 </Pressable>
-                <View>
-                    <Pressable onPress={() => setIsModalLogoutOpen(true)}><Text >Logout</Text></Pressable>
-                    <Image 
-                        style={styles.logoutimg}
-                        source={{uri: "../assets/images/logout.png"}}
-                    />
-                </View>
+                <Pressable onPress={() => setIsModalLogoutOpen(true)} style={styles.changeImageButton}>
+                    <Text style={styles.changeImageText}>Logout</Text>
+                </Pressable>
             </View>
-
             <Modal
                 animationType="slide"
                 transparent={true}
                 visible={isModalPasswordOpen}
-                onRequestClose={() => {
-                    setIsModalOpen(!isModalPasswordOpen);
-                }}>
+                onRequestClose={() => setIsModalPasswordOpen(false)}
+            >
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
                         <TextInput
-                            placeholder='Nova senha'
+                            placeholder="Nova senha"
                             style={styles.inputTextBox}
                             onChangeText={setNovaSenha}
                             value={novaSenha}
                             secureTextEntry={true}
                         />
                         <TextInput
-                            placeholder='Confirmar nova senha'
+                            placeholder="Confirmar nova senha"
                             style={styles.inputTextBox}
                             onChangeText={setConfirmarNovaSenha}
                             value={confirmarNovaSenha}
@@ -170,8 +149,8 @@ export default function User() {
                         <Pressable onPress={handleChangePassword} style={styles.changeImageButton}>
                             <Text style={styles.changeImageText}>Alterar Senha</Text>
                         </Pressable>
-                        <Pressable onPress={!isModalLogoutOpen} >
-                            <Text style={styles.cancel}>Cancelar</Text>
+                        <Pressable onPress={() => setIsModalPasswordOpen(false)} style={styles.cancelButton}>
+                            <Text style={styles.cancelText}>Cancelar</Text>
                         </Pressable>
                     </View>
                 </View>
@@ -180,23 +159,16 @@ export default function User() {
                 animationType="slide"
                 transparent={true}
                 visible={isModalLogoutOpen}
-                onRequestClose={() => {
-                    setIsModalOpen(!isModalOpen);
-                }}>
+                onRequestClose={() => setIsModalLogoutOpen(false)}
+            >
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
-                        <TextInput
-                            placeholder='Tem certeza que deseja sair da sua conta?'
-                            style={styles.inputTextBox}
-                            onChangeText={setConfirmarNovaSenha}
-                            value={confirmarNovaSenha}
-                            secureTextEntry={true}
-                        />
-                        <Pressable onPress={!isModalLogoutOpen}>
-                            <Text style={styles.cancel}>Cancelar</Text>
+                        <Text style={styles.infoText}>Tem certeza que deseja sair?</Text>
+                        <Pressable onPress={handleLogout} style={styles.changeImageButton}>
+                            <Text style={styles.changeImageText}>Confirmar Logout</Text>
                         </Pressable>
-                        <Pressable onPress={handleChangePassword} style={styles.changeImageText}>
-                            <Text >Sim</Text>
+                        <Pressable onPress={() => setIsModalLogoutOpen(false)} style={styles.cancelButton}>
+                            <Text style={styles.cancelText}>Cancelar</Text>
                         </Pressable>
                     </View>
                 </View>
@@ -206,96 +178,98 @@ export default function User() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    display: 'flex',
-    backgroundColor: '#2E2E2E',
-    paddingTop: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100%',
-    width: '100%'
-  },
-  profileContainer: { 
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-    paddingVertical: 30,
-    backgroundColor: '#2E2E2E',
-    borderRadius: 15,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 5,
-    padding: 20,
-    alignSelf: 'stretch',
-    maxWidth: 400,
-  },
-  logo: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    borderWidth: 3,
-    borderColor: '#00ff43',
-    marginBottom: 20,
-  },
-  changeImageButton: {
-    backgroundColor: '#00ff43',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 12,
-    marginVertical: 15,
-  },
-  cancel: {
-    backgroundColor: '#FF0033',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 12,
-    marginVertical: 15,
-  },
-  changeImageText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  userInfoContainer: {
-    width: '100%',
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  infoText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#fff',
-    marginBottom: 5,
-  },
-  inputTextBox: {
-    backgroundColor: 'antiquewhite',
-    margin: 10,
-    padding: 10,
-    borderRadius: 10,
-    placeholderTextColor: 'lightgray',
-    width: '85%',
-  },
-  centeredView: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 22,
-  },
-  modalView: {
-    margin: 20,
-    borderRadius: 20,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
+    container: {
+        display: 'flex',
+        backgroundColor: '#2E2E2E',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100%',
+        width: '100%',
     },
-    shadowOpacity: 0.25,   
+    profileContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 30,
+        backgroundColor: '#2E2E2E',
+        borderRadius: 15,
+        shadowColor: '#000',
+        shadowOpacity: 0.1,
+        shadowRadius: 10,
+        elevation: 5,
+        padding: 20,
+        width: '90%',
+        maxWidth: 400,
+    },
+    logo: {
+        width: 120,
+        height: 120,
+        borderRadius: 60,
+        borderWidth: 3,
+        borderColor: '#00ff43',
+        marginBottom: 20,
+    },
+    changeImageButton: {
+        backgroundColor: '#00ff43',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 12,
+        marginVertical: 15,
+    },
+    cancelButton: {
+        backgroundColor: '#FF0033',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 12,
+        marginVertical: 15,
+    },
+    changeImageText: {
+        color: '#fff',
+        fontWeight: 'bold',
+        fontSize: 16,
+    },
+    cancelText: {
+        color: '#fff',
+        fontWeight: 'bold',
+        fontSize: 16,
+    },
+    userInfoContainer: {
+        width: '100%',
+        alignItems: 'center',
+        marginTop: 20,
+    },
+    infoText: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#fff',
+        marginBottom: 5,
+    },
+    inputTextBox: {
+        backgroundColor: 'antiquewhite',
+        margin: 10,
+        padding: 10,
+        borderRadius: 10,
+        placeholderTextColor: 'lightgray',
+        width: '85%',
+    },
+    centeredView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 22,
+    },
+    modalView: {
+        margin: 20,
+        borderRadius: 20,
+        alignItems: 'center',
+        shadowColor: '#000',
 
-    shadowRadius: 4,
-    elevation:   
- 5,
-    backgroundColor: 'F7F7F7',
-  },
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowRadius: 4,
+        elevation: 5,
+        backgroundColor: 'black',
+        padding: 20
+    },
 });

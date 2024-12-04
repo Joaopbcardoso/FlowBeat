@@ -1,9 +1,7 @@
 import React, { createContext, useContext, useState } from "react";
 
-// Criação do contexto de Álbum
 const AlbumContext = createContext();
 
-// Provedor de contexto
 export const AlbumProvider = ({ children }) => {
   const [selectedAlbumId, setSelectedAlbumId] = useState(null);
 
@@ -14,7 +12,6 @@ export const AlbumProvider = ({ children }) => {
   );
 };
 
-// Hook para acessar o contexto de álbum
 export const useAlbumContext = () => {
   const context = useContext(AlbumContext);
   if (!context) {

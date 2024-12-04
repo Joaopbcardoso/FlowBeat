@@ -29,16 +29,13 @@ export default function Cadastro() {
           });
   
           if (!response.ok) {
-              // Caso a resposta do servidor não seja 200 OK
               const errorMessage = await response.text();
               alert(`Erro: ${errorMessage}`);
               return;
           }
-  
-          // Sucesso no registro
-          const successMessage = await response.text();
+            const successMessage = await response.text();
           alert(successMessage);
-          router.navigate('/'); // Redireciona para a página de login
+          router.navigate('/');
   
       } catch (error) {
           alert('Erro de conexão com o servidor. Por favor, tente novamente mais tarde.');
