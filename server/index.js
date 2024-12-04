@@ -9,7 +9,7 @@ import { rotas_albums } from "./routing/rotas_album.js";
 const app = Express()
 app.use(Express.json())
 app.use(cors())
-//criarTabelas()
+criarTabelas()
 
 app.use('/autenticacao', routes)
 app.use('/user', userRoutes)

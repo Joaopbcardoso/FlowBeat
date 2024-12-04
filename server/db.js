@@ -1,12 +1,16 @@
 import Sequelize from 'sequelize'
+import dotenv from 'dotenv' 
+dotenv.config()
+console.log([process.env.dbdatabase])
+
 
 const sequelize = new Sequelize(
-    'FlowBeat',
-    'postgres',
-    'postgres',
+    process.env.dbusername,
+    process.env.dbdatabase,
+    process.env.dbpassword,
     {
-        host: 'localhost',
-        port: 5432,
+        host: process.env.dbhost,
+        port: process.env.dbport,
         dialect: 'postgres'
     }
 )
